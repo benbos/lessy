@@ -48,13 +48,25 @@ return array(
 
     /*
     |--------------------------------------------------------------------------
-    | Ignore files
+    | Ignore files or folders
     |--------------------------------------------------------------------------
     |
-    | This option will ignore files. 
+    | This option will ignore files of folders.
     |
     */
 
-    'ingore_files' = array()
+    'ignore' => array(),
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Minify files
+    |--------------------------------------------------------------------------
+    |
+    | Set this option to true if you want all files to be minified.
+    |
+    */
+
+    'minify' => false,
 
 );

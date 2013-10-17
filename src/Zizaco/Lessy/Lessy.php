@@ -1,6 +1,7 @@
 <?php namespace Zizaco\Lessy;
 
 use lessc;
+use Minify_Build;
 
 class Lessy
 {
@@ -28,6 +29,10 @@ class Lessy
     {
         $this->_app = $app;
         $this->lessc = new lessc;
+
+        if($this->_app['config']->get('lessy::minify')) {
+            $this->lessc->setFormatter("compressed");
+        }
     }
 
     public function compileTree($origin, $destination)
@@ -72,6 +77,22 @@ class Lessy
     }
 
     /**
+     * Check for ignored files/folders
+     * 
+     * @param  string $file
+     * @param  string $offset
+     * @return bool
+     */
+    protected function isIgnored($file,$offset = false) {
+
+        if(in_array($file,$this->_app['config']->get('lessy::ignore'))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Recursive file compilation
      *
      * @param  string  $origin
@@ -82,6 +103,12 @@ class Lessy
      */
     protected function compileRecursive( $origin, $destiny, $offset = '', $verbose = false )
     {
+        // dd($this->_app['config']->get('lessy::ignore'));
+
+        // $min = new CSSmin();
+
+        // dd($min->run());
+
         $tree = array();
 
         if( ! is_dir($origin.$offset) )
@@ -93,8 +120,9 @@ class Lessy
 
         foreach ( $dir as $filename )
         {
-            if ( is_dir( $origin.$offset.$filename ) and $filename != '.' and $filename != '..')
+            if ( is_dir( $origin.$offset.$filename ) and $filename != '.' and $filename != '..' and !$this->isIgnored($filename))
             {
+
                 if ( ! file_exists( $destiny.$offset.$filename ) )
                 {
                     mkdir( $destiny.$offset.$filename );
@@ -103,7 +131,7 @@ class Lessy
                 // Recursive call
                 $tree[$filename] = $this->compileRecursive( $origin, $destiny, $offset.$filename.'/', $verbose );
             }
-            elseif ( is_file( $origin.$offset.$filename ))
+            elseif ( is_file( $origin.$offset.$filename ) and !$this->isIgnored($filename,$offset))
             {
                 if ( substr($filename,-5) == '.less' or substr($filename,-4) == '.css' )
                 {
@@ -119,6 +147,7 @@ class Lessy
                         $origin.$offset.$filename,
                         $destiny.$offset.substr($filename,0,strrpos($filename,'.',-1)).'.css'
                     );
+
                 }
                 else
                 {
