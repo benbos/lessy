@@ -1,7 +1,5 @@
 # Lessy (Laravel4 Package)
 
-Testing
-
 ![Confide Poster](https://dl.dropbox.com/u/12506137/libs_bundles/lessy.png)
 
 [![ProjectStatus](http://stillmaintained.com/Zizaco/lessy.png)](http://stillmaintained.com/Zizaco/lessy)
